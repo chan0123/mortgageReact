@@ -1,6 +1,7 @@
 import * as React from "react";
 import TextFieldWithAdjustButton from "./TextFieldWithAdjustButton.js";
 import TextFieldWithAdjustButtonEnum from "./TextFieldWithAdjustButtonEnum.js";
+// import Button from '@mui/material/Button';
 import "./App.css";
 
 const title = "ABC";
@@ -69,6 +70,7 @@ function App() {
     console.log(`addClicked, name: ${name}`);
     setMortgage({ ...mortgage, [name]: mortgage[name] + step });
   };
+
   const minusClicked = (name, step) => {
     console.log(`minusClicked, name: ${name}`);
     if (mortgage[name] - step >= 0) {
@@ -77,7 +79,29 @@ function App() {
   };
 
   const mortgagePayment = () => {
-    return mortgage.price / 2 + mortgage.hoa;
+    // calculate the mortgage payment
+    const mortgageCalculation = {
+      principle: mortgage.price * (1 - mortgage.downpayRatio / 100),
+      ratePerMonth: mortgage.interest / 100 / 12,
+      numberOfTotalPayment: 12 * mortgage.loanTerm.value
+    };
+    const monthlyPayment =
+      (mortgageCalculation.principle *
+        mortgageCalculation.ratePerMonth *
+        (1 + mortgageCalculation.ratePerMonth) **
+          mortgageCalculation.numberOfTotalPayment) /
+      ((1 + mortgageCalculation.ratePerMonth) **
+        mortgageCalculation.numberOfTotalPayment -
+        1);
+    const monthlyInterest =
+      mortgageCalculation.principle * mortgageCalculation.ratePerMonth;
+    const monthlyPrinciple = monthlyPayment - monthlyInterest;
+    return {
+      ...mortgageCalculation,
+      monthlyPayment: monthlyPayment,
+      monthlyInterest: monthlyInterest,
+      monthlyPrinciple: monthlyPrinciple
+    };
   };
 
   const valueChange = (event, name) => {
@@ -110,6 +134,24 @@ function App() {
         valueChange={valueChange}
       />
       <TextFieldWithAdjustButton
+        labelText="Down Payment Ratio (%)"
+        name="downpayRatio"
+        mortgage={mortgage}
+        step={5}
+        minusClicked={minusClicked}
+        addClicked={addClicked}
+        valueChange={valueChange}
+      />
+      <TextFieldWithAdjustButton
+        labelText="Interet Rate (%)"
+        name="interest"
+        mortgage={mortgage}
+        step={0.125}
+        minusClicked={minusClicked}
+        addClicked={addClicked}
+        valueChange={valueChange}
+      />
+      <TextFieldWithAdjustButton
         labelText="Rent ($) "
         name="rent"
         mortgage={mortgage}
@@ -127,6 +169,7 @@ function App() {
         addClicked={addClicked}
         valueChange={valueChange}
       />
+      <div> Loan Term </div>
       <TextFieldWithAdjustButtonEnum
         mortgage={mortgage}
         name="loanTerm"
@@ -139,7 +182,7 @@ function App() {
        */}
       <p>House Price: ${mortgage.price}</p>
       <p>HOA: ${JSON.stringify(mortgage)}</p>
-      <p>Mortgage Payment: {mortgagePayment()}</p>
+      <p>Mortgage Payment: ${JSON.stringify(mortgagePayment())}</p>
     </div>
   );
 }

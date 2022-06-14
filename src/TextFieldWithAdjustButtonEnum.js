@@ -1,24 +1,25 @@
+import React from "react";
+import Select from "react-select";
+
 // TextFieldWithAdjustButtonEnum Component
 const TextFieldWithAdjustButtonEnum = (props) => {
-    // props
-    // labelText
-    // minusClicked
-    // plusClicked
-    // fieldIsEnum
+  // props
+  // labelText
+  // minusClicked
+  // plusClicked
+  // fieldIsEnum
 
-    
-    return (
-      <div>       
+  return (
+    <div>
+      <Select
+        value={props.mortgage[props.name]}
+        onChange={(selectedOption) =>
+          props.selectChange(selectedOption, props.name)
+        }
+        options={props.options}
+      />
+    </div>
+  );
+};
 
-        <label htmlFor={props.labelText}>{props.labelText} </label>
-        <button onClick={props.minusClicked} type="button">-</button>
-        <input id="house_price" type="number" onChange={props.HousePriceChange} readOnly/>
-        <button onClick={props.plusClicked} type="button">+</button>
-        
-
-      </div>
-    );
-  
-  }
-
-  export default TextFieldWithAdjustButtonEnum;
+export default TextFieldWithAdjustButtonEnum;

@@ -6,42 +6,6 @@ import Button from '@mui/material/Button';
 // Mortgage Component
 const Mortgage = () => {
 
-    const title = "ABC";
-
-    // List Component
-    const List = (props) => {
-      return (
-        <div>
-          searchText={props.searchText}
-          <ul>
-            {props.list.map((item) => {
-              return <li key={item}>{item}</li>;
-            })}
-          </ul>
-        </div>
-      );
-    };
-    
-    // Search Component
-    const Search = (props) => {
-      // Search has a props onSearch
-      // passing from top level
-    
-      const handleChange = (event) => {
-        console.log(event);
-        console.log(event.target.value);
-      };
-    
-      return (
-        <div>
-          <label htmlFor="search">Search: </label>
-          <input id="search" type="text" onChange={props.onSearch} />
-        </div>
-      );
-    };
-
-    const list = [1, 2, 3, 4];
-
   // define the loan type options here
   const loanTypeOptions = [
     { value: 10, label: "10-Fixed" },
@@ -58,7 +22,10 @@ const Mortgage = () => {
     rent: 2000,
     hoa: 200,
     loanTerm: 30, // default to be 30 year fixed
-    insurance: 900
+    insurancePerYear: 900,
+    propertyTax: 110, // in hundreds to avoid decimal numbers
+    vacancyPercentage: 5,
+    maintenancePercentage: 5
   });
 
   const handleSearch = (event) => {
@@ -68,8 +35,13 @@ const Mortgage = () => {
     setSearchTerm(event.target.value);
   };
 
+  const roundToDecimalPlace = (number, place) => {
+
+    return (Math.round(number * 10**place) / 10**place).toFixed(place);
+  }
+
   const addClicked = (name, step) => {
-    console.log(`addClicked, name: ${name}`);
+    console.log(`addClicked, name: ${name} with step: ${step}`);
     setMortgage({ ...mortgage, [name]: mortgage[name] + step });
   };
 
@@ -82,27 +54,31 @@ const Mortgage = () => {
 
   const mortgagePayment = () => {
     // calculate the mortgage payment
-    const mortgageCalculation = {
-      principle: mortgage.price * (1 - mortgage.downpayRatio / 100),
-      ratePerMonth: mortgage.interest / 100 / 12,
-      numberOfTotalPayment: 12 * mortgage.loanTerm
-    };
-    const monthlyPayment =
-      (mortgageCalculation.principle *
-        mortgageCalculation.ratePerMonth *
-        (1 + mortgageCalculation.ratePerMonth) **
-          mortgageCalculation.numberOfTotalPayment) /
-      ((1 + mortgageCalculation.ratePerMonth) **
-        mortgageCalculation.numberOfTotalPayment -
-        1);
-    const monthlyInterest =
-      mortgageCalculation.principle * mortgageCalculation.ratePerMonth;
+    const loanAmount = mortgage.price * (1 - mortgage.downpayRatio / 100);
+    const ratePerMonth = mortgage.interest / 100 / 12;
+    const numberOfTotalPayment = 12 * mortgage.loanTerm
+    const monthlyPayment = (loanAmount * ratePerMonth * (1 + ratePerMonth) ** numberOfTotalPayment) /
+                            ((1 + ratePerMonth) ** numberOfTotalPayment - 1);
+    const downpaymentAmount = mortgage.price * mortgage.downpayRatio / 100;
+    const monthlyInterest =  loanAmount * ratePerMonth;
     const monthlyPrinciple = monthlyPayment - monthlyInterest;
+    const loanClosingCost = 3000 // just a fixed number for now
+    const totalCashNeeded = loanClosingCost + downpaymentAmount;
+    const propertTaxPerMonth = mortgage.price*mortgage.propertyTax/10000/12;
+    const insurancePerMonth = mortgage.insurancePerYear/12;
+
     return {
-      ...mortgageCalculation,
-      monthlyPayment: monthlyPayment,
-      monthlyInterest: monthlyInterest,
-      monthlyPrinciple: monthlyPrinciple
+      monthlyPayment: monthlyPayment.toFixed(2),
+      monthlyPrinciple: monthlyPrinciple.toFixed(2),
+      monthlyInterest: monthlyInterest.toFixed(2),
+      propertTaxPerMonth: propertTaxPerMonth.toFixed(2), // propertyTax is in hundreds
+      hoaPerMonth: mortgage.hoa.toFixed(2),
+      insurancePerMonth: insurancePerMonth.toFixed(2),  
+      totalMonthlyExpense: (monthlyPayment+propertTaxPerMonth+mortgage.hoa+insurancePerMonth).toFixed(2),
+      downpaymentAmount : downpaymentAmount.toFixed(2),
+      loanAmount: loanAmount.toFixed(2),
+      totalCashNeeded : totalCashNeeded.toFixed(2),
+      
     };
   };
 
@@ -118,15 +94,11 @@ const Mortgage = () => {
     setMortgage({ ...mortgage, loanTerm: event.target.value });
   };
 
-
     return (
         <div>
-        <h1>Hello {title}!</h1>
-        <Search onSearch={handleSearch} />{" "}
-        {/* handleSearch is a function, which is a Callback at top-level */}
-        <br />
-        <List list={list} searchText={searchTerm} />
-        <br />
+        
+        <br/>
+        
         <TextFieldWithAdjustButton
           labelText="House Price ($)"
           name="price"
@@ -149,7 +121,7 @@ const Mortgage = () => {
           labelText="Interet Rate (%)"
           name="interest"
           mortgage={mortgage}
-          step={0.125}
+          step={0.125.toFixed(3)}
           minusClicked={minusClicked}
           addClicked={addClicked}
           valueChange={valueChange}
@@ -171,32 +143,41 @@ const Mortgage = () => {
           minusClicked={minusClicked}
           addClicked={addClicked}
           valueChange={valueChange}
-        />
+        />    
         <TextFieldWithAdjustButton
           labelText="Insurance Per Year ($)"
-          name="insurance"
+          name="insurancePerYear"
           mortgage={mortgage}
           step={50}
           minusClicked={minusClicked}
           addClicked={addClicked}
           valueChange={valueChange}
         />
+        <TextFieldWithAdjustButton
+          labelText="Property Tax Per Year (%) "
+          name="propertyTax"
+          mortgage={mortgage}
+          divideByHundred={true}
+          step={10} // 0.1, times 100 to avoid decimal
+          minusClicked={minusClicked}
+          addClicked={addClicked}
+          valueChange={valueChange}
+        />
         <TextFieldWithAdjustButtonEnum
           mortgage={mortgage}
-          name="loanTerm"
+          name="loanTerm" 
           options={loanTypeOptions}
           selectChange={selectChange}
         />
-  
-  
-  
+
+
         {/* 
         <TextFieldWithAdjustButtonEnum labelText="Interest (%)" />
         <TextFieldWithAdjustButtonEnum labelText="Loan Type" />
          */}
         <p>House Price: ${mortgage.price}</p>
-        <p>HOA: ${JSON.stringify(mortgage)}</p>
-        <p>Debug: ${JSON.stringify(mortgagePayment())}</p>
+        <p style={{wordBreak: 'break-all'}}>HOA: ${JSON.stringify(mortgage)}</p>
+        <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
         <p>Mortgage Payment: ${mortgagePayment().monthlyPayment}</p>
   
         <Button variant="contained">Hello World</Button>

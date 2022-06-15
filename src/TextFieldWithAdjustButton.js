@@ -13,10 +13,10 @@ const TextFieldWithAdjustButton = (props) => {
         -
       </button>
       <input
-        id="house_price"
+        id="props.name"
         type="number"
         onChange={(e) => props.valueChange(e, props.name)}
-        value={props.mortgage[props.name]}
+        value={props.divideByHundred? props.mortgage[props.name]/100 : props.mortgage[props.name]}
         step={props.step}
       />
       <button

@@ -1,10 +1,5 @@
 // TextFieldWithAdjustButton Component
 const TextFieldWithAdjustButton = (props) => {
-  // props
-  // labelText
-  // minusClicked
-  // plusClicked
-  // default
 
   return (
     <div>

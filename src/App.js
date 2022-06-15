@@ -1,7 +1,7 @@
 import * as React from "react";
 import TextFieldWithAdjustButton from "./TextFieldWithAdjustButton.js";
 import TextFieldWithAdjustButtonEnum from "./TextFieldWithAdjustButtonEnum.js";
-// import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import "./App.css";
 
 const title = "ABC";
@@ -56,7 +56,7 @@ function App() {
     interest: 4,
     rent: 2000,
     hoa: 200,
-    loanTerm: loanTypeOptions[3] // default to be 30 year fixed
+    loanTerm: 30 // default to be 30 year fixed
   });
 
   const handleSearch = (event) => {
@@ -83,7 +83,7 @@ function App() {
     const mortgageCalculation = {
       principle: mortgage.price * (1 - mortgage.downpayRatio / 100),
       ratePerMonth: mortgage.interest / 100 / 12,
-      numberOfTotalPayment: 12 * mortgage.loanTerm.value
+      numberOfTotalPayment: 12 * mortgage.loanTerm
     };
     const monthlyPayment =
       (mortgageCalculation.principle *
@@ -110,10 +110,10 @@ function App() {
     setMortgage({ ...mortgage, [name]: parseInt(event.target.value, 10) });
   };
 
-  const selectChange = (selectedOption, name) => {
+  const selectChange = (event, name) => {
     console.log("selectChange");
-    console.log(`selction option is ${JSON.stringify(selectedOption)}`);
-    setMortgage({ ...mortgage, loanTerm: selectedOption });
+    console.log(`selction option is ${JSON.stringify(event)}`);
+    setMortgage({ ...mortgage, loanTerm: event.target.value });
   };
 
   return (
@@ -169,7 +169,6 @@ function App() {
         addClicked={addClicked}
         valueChange={valueChange}
       />
-      <div> Loan Term </div>
       <TextFieldWithAdjustButtonEnum
         mortgage={mortgage}
         name="loanTerm"
@@ -183,7 +182,11 @@ function App() {
       <p>House Price: ${mortgage.price}</p>
       <p>HOA: ${JSON.stringify(mortgage)}</p>
       <p>Mortgage Payment: ${JSON.stringify(mortgagePayment())}</p>
+
+      <Button variant="contained">Hello World</Button>
+
     </div>
+    
   );
 }
 

@@ -56,7 +56,8 @@ function App() {
     interest: 4,
     rent: 2000,
     hoa: 200,
-    loanTerm: 30 // default to be 30 year fixed
+    loanTerm: 30, // default to be 30 year fixed
+    insurance: 900
   });
 
   const handleSearch = (event) => {
@@ -169,19 +170,32 @@ function App() {
         addClicked={addClicked}
         valueChange={valueChange}
       />
+      <TextFieldWithAdjustButton
+        labelText="Insurance Per Year ($)"
+        name="insurance"
+        mortgage={mortgage}
+        step={50}
+        minusClicked={minusClicked}
+        addClicked={addClicked}
+        valueChange={valueChange}
+      />
       <TextFieldWithAdjustButtonEnum
         mortgage={mortgage}
         name="loanTerm"
         options={loanTypeOptions}
         selectChange={selectChange}
       />
+
+
+
       {/* 
       <TextFieldWithAdjustButtonEnum labelText="Interest (%)" />
       <TextFieldWithAdjustButtonEnum labelText="Loan Type" />
        */}
       <p>House Price: ${mortgage.price}</p>
       <p>HOA: ${JSON.stringify(mortgage)}</p>
-      <p>Mortgage Payment: ${JSON.stringify(mortgagePayment())}</p>
+      <p>Debug: ${JSON.stringify(mortgagePayment())}</p>
+      <p>Mortgage Payment: ${mortgagePayment().monthlyPayment}</p>
 
       <Button variant="contained">Hello World</Button>
 

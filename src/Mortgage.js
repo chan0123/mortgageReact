@@ -2,6 +2,7 @@ import TextFieldWithAdjustButton from "./TextFieldWithAdjustButton.js";
 import TextFieldWithAdjustButtonEnum from "./TextFieldWithAdjustButtonEnum.js";
 import * as React from "react";
 import Button from '@mui/material/Button';
+import Result from "./Result"
 
 // Mortgage Component
 const Mortgage = () => {
@@ -77,6 +78,7 @@ const Mortgage = () => {
       totalMonthlyExpense: (monthlyPayment+propertTaxPerMonth+mortgage.hoa+insurancePerMonth).toFixed(2),
       downpaymentAmount : downpaymentAmount.toFixed(2),
       loanAmount: loanAmount.toFixed(2),
+      loanClosingCost: loanClosingCost,
       totalCashNeeded : totalCashNeeded.toFixed(2),
       
     };
@@ -181,7 +183,7 @@ const Mortgage = () => {
         <p>Mortgage Payment: ${mortgagePayment().monthlyPayment}</p>
   
         <Button variant="contained">Hello World</Button>
-  
+        <Result mortgagePayment={mortgagePayment()}></Result>
       </div>
     );
   };

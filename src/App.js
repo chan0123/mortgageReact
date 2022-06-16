@@ -17,7 +17,6 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">

@@ -67,6 +67,8 @@ const Mortgage = () => {
     const totalCashNeeded = loanClosingCost + downpaymentAmount;
     const propertTaxPerMonth = mortgage.price*mortgage.propertyTax/10000/12;
     const insurancePerMonth = mortgage.insurancePerYear/12;
+    const totalMonthlyExpense = (monthlyPayment+propertTaxPerMonth+mortgage.hoa+insurancePerMonth)
+    const cashflowPerMonth = mortgage.rent - totalMonthlyExpense
 
     return {
       monthlyPayment: monthlyPayment.toFixed(2),
@@ -75,11 +77,13 @@ const Mortgage = () => {
       propertTaxPerMonth: propertTaxPerMonth.toFixed(2), // propertyTax is in hundreds
       hoaPerMonth: mortgage.hoa.toFixed(2),
       insurancePerMonth: insurancePerMonth.toFixed(2),  
-      totalMonthlyExpense: (monthlyPayment+propertTaxPerMonth+mortgage.hoa+insurancePerMonth).toFixed(2),
+      totalMonthlyExpense: totalMonthlyExpense.toFixed(2),
       downpaymentAmount : downpaymentAmount.toFixed(2),
       loanAmount: loanAmount.toFixed(2),
       loanClosingCost: loanClosingCost,
       totalCashNeeded : totalCashNeeded.toFixed(2),
+      rent : mortgage.rent.toFixed(2),
+      cashflowPerMonth: cashflowPerMonth.toFixed(2) 
       
     };
   };
@@ -183,7 +187,10 @@ const Mortgage = () => {
         <p>Mortgage Payment: ${mortgagePayment().monthlyPayment}</p>
   
         <Button variant="contained">Hello World</Button>
-        <Result mortgagePayment={mortgagePayment()}></Result>
+        <br />
+        Total Cash Needed: ${mortgagePayment().totalCashNeeded} <Result name="totalCashNeeded" mortgagePayment={mortgagePayment()}></Result>
+        Total Monthly Payment: ${mortgagePayment().totalMonthlyExpense} <Result name="totalMonthlyExpense" mortgagePayment={mortgagePayment()}></Result>
+        Total Cashflow per month: ${mortgagePayment().cashflowPerMonth} <Result name="cashflowPerMonth" mortgagePayment={mortgagePayment()}></Result>
       </div>
     );
   };

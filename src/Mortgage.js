@@ -17,16 +17,17 @@ const Mortgage = () => {
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [mortgage, setMortgage] = React.useState({
-    price: 400000,
+    price: 480000,
     downpayRatio: 20,
     interest: 4,
-    rent: 2000,
-    hoa: 200,
+    rent: 2450,
+    hoa: 420,
     loanTerm: 30, // default to be 30 year fixed
-    insurancePerYear: 900,
+    insurancePerYear: 500,
     propertyTax: 110, // in hundreds to avoid decimal numbers
-    vacancyPercentage: 5,
-    maintenancePercentage: 5
+    vacancyPercentage: 3,
+    maintenancePercentage: 3,
+    managementFeePercentage: 0
   });
 
   const handleSearch = (event) => {
@@ -65,12 +66,22 @@ const Mortgage = () => {
     const monthlyPrinciple = monthlyPayment - monthlyInterest;
     const loanClosingCost = 3000 // just a fixed number for now
     const totalCashNeeded = loanClosingCost + downpaymentAmount;
-    const propertTaxPerMonth = mortgage.price*mortgage.propertyTax/10000/12;
+    const propertTaxPerMonth = mortgage.price * mortgage.propertyTax/10000/12;
     const insurancePerMonth = mortgage.insurancePerYear/12;
     const totalMonthlyExpense = (monthlyPayment+propertTaxPerMonth+mortgage.hoa+insurancePerMonth)
     const cashflowPerMonth = mortgage.rent - totalMonthlyExpense
-
+    const vacancyAmountPerMonth = mortgage.rent * mortgage.vacancyPercentage/100
+    const maintenanceAmountPerMonth = mortgage.rent * mortgage.maintenancePercentage/100
+    const managementFeePerMonth = mortgage.rent * mortgage.managementFeePercentage/100
+    const cashflowWithFactorPerMonth = mortgage.rent - totalMonthlyExpense - vacancyAmountPerMonth - 
+                                       maintenanceAmountPerMonth - managementFeePerMonth;
+    // Capitalization Rate = Net Operating Income / Purchase Price
+    const netOperatingIncomeMonthly = mortgage.rent - propertTaxPerMonth - insurancePerMonth - mortgage.hoa
+    const netOperatingIncomeAnnual = netOperatingIncomeMonthly*12
+    const capRate = (netOperatingIncomeAnnual / mortgage.price) * 100
+                          
     return {
+      housePrice : mortgage.price.toFixed(2),
       monthlyPayment: monthlyPayment.toFixed(2),
       monthlyPrinciple: monthlyPrinciple.toFixed(2),
       monthlyInterest: monthlyInterest.toFixed(2),
@@ -83,8 +94,14 @@ const Mortgage = () => {
       loanClosingCost: loanClosingCost,
       totalCashNeeded : totalCashNeeded.toFixed(2),
       rent : mortgage.rent.toFixed(2),
-      cashflowPerMonth: cashflowPerMonth.toFixed(2) 
-      
+      cashflowPerMonth: cashflowPerMonth.toFixed(2),
+      cashflowWithFactorPerMonth: cashflowWithFactorPerMonth.toFixed(2),
+      vacancyAmountPerMonth: vacancyAmountPerMonth.toFixed(2),
+      maintenanceAmountPerMonth: maintenanceAmountPerMonth.toFixed(2),
+      managementFeePerMonth: managementFeePerMonth.toFixed(2),
+      netOperatingIncomeMonthly: netOperatingIncomeMonthly.toFixed(2),
+      netOperatingIncomeAnnual: netOperatingIncomeAnnual.toFixed(2),
+      capRate: capRate.toFixed(2)
     };
   };
 
@@ -175,24 +192,60 @@ const Mortgage = () => {
           options={loanTypeOptions}
           selectChange={selectChange}
         />
-
+        <TextFieldWithAdjustButton
+          labelText="Vacancy (%) "
+          name="vacancyPercentage"
+          mortgage={mortgage}
+          divideByHundred={false}
+          step={1} 
+          minusClicked={minusClicked}
+          addClicked={addClicked}
+          valueChange={valueChange}
+        />
+        <TextFieldWithAdjustButton
+          labelText="Maintenance (%) "
+          name="maintenancePercentage"
+          mortgage={mortgage}
+          divideByHundred={false}
+          step={1} 
+          minusClicked={minusClicked}
+          addClicked={addClicked}
+          valueChange={valueChange}
+        />
+        <TextFieldWithAdjustButton
+          labelText="Management Fee (%) "
+          name="managementFeePercentage"
+          mortgage={mortgage}
+          divideByHundred={false}
+          step={1} 
+          minusClicked={minusClicked}
+          addClicked={addClicked}
+          valueChange={valueChange}
+        />
 
         {/* 
         <TextFieldWithAdjustButtonEnum labelText="Interest (%)" />
         <TextFieldWithAdjustButtonEnum labelText="Loan Type" />
          */}
-        <p>House Price: ${mortgage.price}</p>
-        <p style={{wordBreak: 'break-all'}}>HOA: ${JSON.stringify(mortgage)}</p>
-        <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
-        <p>Mortgage Payment: ${mortgagePayment().monthlyPayment}</p>
-  
-        <Button variant="contained">Hello World</Button>
+
+ 
+        
         <br />
-        Total Cash Needed: ${mortgagePayment().totalCashNeeded} <Result name="totalCashNeeded" mortgagePayment={mortgagePayment()}></Result>
-        Total Monthly Payment: ${mortgagePayment().totalMonthlyExpense} <Result name="totalMonthlyExpense" mortgagePayment={mortgagePayment()}></Result>
-        Total Cashflow per month: <div style={{color: mortgagePayment().cashflowPerMonth < 0 ? "red" : "green"}}>
-            ${mortgagePayment().cashflowPerMonth} </div>
-            <Result name="cashflowPerMonth" mortgagePayment={mortgagePayment()}></Result>
+        Total Cash Needed: ${mortgagePayment().totalCashNeeded} <Result name="totalCashNeeded" mortgagePayment={mortgagePayment()}></Result><br/>
+        Total Monthly Payment: ${mortgagePayment().totalMonthlyExpense} <Result name="totalMonthlyExpense" mortgagePayment={mortgagePayment()}></Result><br/>
+        Total Cashflow per month: <span style={{color: mortgagePayment().cashflowPerMonth < 0 ? "red" : "green"}}>
+            ${mortgagePayment().cashflowPerMonth} </span>
+            <Result name="cashflowPerMonth" mortgagePayment={mortgagePayment()}></Result><br/>
+        Total Cashflow with factor per month: <span style={{color: mortgagePayment().cashflowWithFactorPerMonth < 0 ? "red" : "green"}}>
+            ${mortgagePayment().cashflowWithFactorPerMonth} </span>
+            <Result name="cashflowWithFactorPerMonth" mortgagePayment={mortgagePayment()}></Result><br/>
+        Cap Rate (%): {mortgagePayment().capRate} <Result name="capRate" mortgagePayment={mortgagePayment()}></Result><br/>
+
+
+
+        <Button variant="contained">TODO: Get Mortgage Rate</Button>
+        <p style={{wordBreak: 'break-all'}}>State: ${JSON.stringify(mortgage)}</p>
+        <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
       </div>
     );
   };

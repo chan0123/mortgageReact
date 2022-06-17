@@ -79,6 +79,64 @@ const cashflowPerMonth = (mortgagePayment) => {
     );
 };
 
+const cashflowWithFactorPerMonth = (mortgagePayment) => {
+    return (
+        <div>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Cashflow per month
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Total Monthly Income: ${mortgagePayment.rent} 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Total Monthly Expense: ${mortgagePayment.totalMonthlyExpense} 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Vacancy per month (average): ${mortgagePayment.vacancyAmountPerMonth} 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Maintenance per month (average): ${mortgagePayment.maintenanceAmountPerMonth} 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Management Fee per month: ${mortgagePayment.managementFeePerMonth} 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          ================================ 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Total Monthly Cashflow: ${mortgagePayment.cashflowWithFactorPerMonth} 
+        </Typography>
+        </div>
+    );
+};
+
+const capRate = (mortgagePayment) => {
+    return (
+        <div>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Capitalization Rate (%)
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Capitalization Rate = Net Operating Income / Purchase Price
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Net Opearting Income Per Month: ${mortgagePayment.netOperatingIncomeMonthly} 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Net Opearting Income Per Year: ${mortgagePayment.netOperatingIncomeAnnual} 
+        </Typography>   
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Purchase Price: ${mortgagePayment.housePrice} 
+        </Typography>                     
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          ================================ 
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          Cap Rate (%): ${mortgagePayment.capRate} 
+        </Typography>
+        </div>
+    );
+};
 
 // Result Component
 const Result = ({mortgagePayment, name}) => {
@@ -101,7 +159,7 @@ const Result = ({mortgagePayment, name}) => {
     const handleClose = () => setOpen(false);
 
     return (
-        <div>
+        <span>
         <Button onClick={handleOpen}>Detail</Button>
         <Modal
           open={open}
@@ -113,9 +171,11 @@ const Result = ({mortgagePayment, name}) => {
             {name == "totalCashNeeded" && totalCashNeeded(mortgagePayment)}
             {name == "totalMonthlyExpense" && totalMonthlyExpense(mortgagePayment)}
             {name == "cashflowPerMonth" && cashflowPerMonth(mortgagePayment)}
+            {name == "cashflowWithFactorPerMonth" && cashflowWithFactorPerMonth(mortgagePayment)}            
+            {name == "capRate" && capRate(mortgagePayment)}            
           </Box>
         </Modal>
-        </div>
+        </span>
     );
   };
   

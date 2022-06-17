@@ -190,7 +190,9 @@ const Mortgage = () => {
         <br />
         Total Cash Needed: ${mortgagePayment().totalCashNeeded} <Result name="totalCashNeeded" mortgagePayment={mortgagePayment()}></Result>
         Total Monthly Payment: ${mortgagePayment().totalMonthlyExpense} <Result name="totalMonthlyExpense" mortgagePayment={mortgagePayment()}></Result>
-        Total Cashflow per month: ${mortgagePayment().cashflowPerMonth} <Result name="cashflowPerMonth" mortgagePayment={mortgagePayment()}></Result>
+        Total Cashflow per month: <div style={{color: mortgagePayment().cashflowPerMonth < 0 ? "red" : "green"}}>
+            ${mortgagePayment().cashflowPerMonth} </div>
+            <Result name="cashflowPerMonth" mortgagePayment={mortgagePayment()}></Result>
       </div>
     );
   };

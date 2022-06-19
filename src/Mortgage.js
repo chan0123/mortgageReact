@@ -1,8 +1,10 @@
 import TextFieldWithAdjustButton from "./TextFieldWithAdjustButton.js";
 import TextFieldWithAdjustButtonEnum from "./TextFieldWithAdjustButtonEnum.js";
-import * as React from "react";
+// import * as React from "react";
 import Button from '@mui/material/Button';
 import Result from "./Result"
+import RateAPI from "./RateAPI.js";
+import React, { useState, useEffect } from 'react';
 
 // Mortgage Component
 const Mortgage = () => {
@@ -15,8 +17,7 @@ const Mortgage = () => {
     { value: 30, label: "30-Fixed" }
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [mortgage, setMortgage] = React.useState({
+  const mortgageDefault = {
     price: 480000,
     downpayRatio: 20,
     interest: 4,
@@ -28,7 +29,10 @@ const Mortgage = () => {
     vacancyPercentage: 3,
     maintenancePercentage: 3,
     managementFeePercentage: 0
-  });
+  }
+
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [mortgage, setMortgage] = React.useState(mortgageDefault);
 
   const handleSearch = (event) => {
     console.log(event);
@@ -53,6 +57,12 @@ const Mortgage = () => {
       setMortgage({ ...mortgage, [name]: mortgage[name] - step });
     }
   };
+
+  // set the mortgage back to default values
+  const resetMortgage = () => {
+    setMortgage(mortgageDefault);
+
+;  }
 
   const mortgagePayment = () => {
     // calculate the mortgage payment
@@ -116,6 +126,21 @@ const Mortgage = () => {
     console.log(`selction option is ${JSON.stringify(event)}`);
     setMortgage({ ...mortgage, loanTerm: event.target.value });
   };
+ 
+  // Pass useEffect a function
+  useEffect(() => {
+    // This gets called after every render, by default
+    // (the first one, and every one after that)
+    console.log('render!');
+    RateAPI()
+
+    // If you want to implement componentWillUnmount,
+    // return a function from here, and React will call
+    // it prior to unmounting.
+    return () => console.log('unmounting...');
+  })
+
+ 
 
     return (
         <div>
@@ -243,7 +268,7 @@ const Mortgage = () => {
 
 
 
-        <Button variant="contained">TODO: Get Mortgage Rate</Button>
+        <Button variant="contained" onClick={resetMortgage}>Reset</Button>
         <p style={{wordBreak: 'break-all'}}>State: ${JSON.stringify(mortgage)}</p>
         <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
       </div>

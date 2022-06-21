@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Result from "./Result"
 import RateAPI from "./RateAPI.js";
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 // Mortgage Component
 const Mortgage = () => {
@@ -33,6 +34,7 @@ const Mortgage = () => {
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [mortgage, setMortgage] = React.useState(mortgageDefault);
+  const [interest, setInterest] = React.useState(0);
 
   const handleSearch = (event) => {
     console.log(event);
@@ -63,6 +65,29 @@ const Mortgage = () => {
     setMortgage(mortgageDefault);
 
 ;  }
+
+  const resetInteretRate = () => {
+    setInterest(0);
+  }
+
+
+const apiAddress = "https://api.api-ninjas.com/v1/interestrate"
+const apiKey = "cbUacErklh2yX2/duXxCvQ==CzXo86j5Yz6UapWK"
+
+  const getInterest = () => {
+
+    axios.get(apiAddress, { headers: { 'X-Api-Key': apiKey } })
+    .then(response => {
+        // If request is good...
+        console.log(response.data);
+        console.log(`US interest rate is ${response.data.central_bank_rates[0].rate_pct}`);
+        setInterest(response.data.central_bank_rates[0].rate_pct);
+     })
+    .catch((error) => {
+        console.log('error ' + error);
+     });
+
+  };
 
   const mortgagePayment = () => {
     // calculate the mortgage payment
@@ -132,13 +157,14 @@ const Mortgage = () => {
     // This gets called after every render, by default
     // (the first one, and every one after that)
     console.log('render!');
-    RateAPI()
+    // const data = RateAPI()
+    // console.log(`useEffect: data is ${data}`)
 
     // If you want to implement componentWillUnmount,
     // return a function from here, and React will call
     // it prior to unmounting.
     return () => console.log('unmounting...');
-  })
+  }, []) // empty dependency for now
 
  
 
@@ -268,7 +294,12 @@ const Mortgage = () => {
 
 
 
-        <Button variant="contained" onClick={resetMortgage}>Reset</Button>
+        <Button variant="contained" onClick={resetMortgage}>Reset Mortgage</Button> <br/>  <br/>
+        <Button variant="contained" onClick={getInterest}>Get Interest Rate From Web Service</Button>  <br/>  <br/>
+        <Button variant="contained" onClick={resetInteretRate}>Reset Interest Rate</Button>  <br/>  <br/>
+
+        
+        <p> Interest Rate from Web Service: {interest}%</p>
         <p style={{wordBreak: 'break-all'}}>State: ${JSON.stringify(mortgage)}</p>
         <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
       </div>

@@ -7,6 +7,8 @@ import RateAPI from "./RateAPI.js";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+var interestRateTimes2 = 0;
+
 // Mortgage Component
 const Mortgage = () => {
 
@@ -71,9 +73,8 @@ const Mortgage = () => {
   }
 
 
-const apiAddress = "https://api.api-ninjas.com/v1/interestrate"
-const apiKey = "cbUacErklh2yX2/duXxCvQ==CzXo86j5Yz6UapWK"
-
+  const apiAddress = "https://api.api-ninjas.com/v1/interestrate"
+  const apiKey = "cbUacErklh2yX2/duXxCvQ==CzXo86j5Yz6UapWK"
   const getInterest = () => {
 
     axios.get(apiAddress, { headers: { 'X-Api-Key': apiKey } })
@@ -88,6 +89,24 @@ const apiKey = "cbUacErklh2yX2/duXxCvQ==CzXo86j5Yz6UapWK"
      });
 
   };
+
+  const interestRateTimes2Func = () => {
+    interestRateTimes2 = interest * 2;
+    console.log(`interest rate times 2 = ${interestRateTimes2}`)
+  }
+
+  // Pass useEffect a function
+  useEffect(() => {
+    // This gets called after every render, by default
+    // (the first one, and every one after that)
+    console.log('interest rate change, render!');
+    interestRateTimes2Func();
+
+    // If you want to implement componentWillUnmount,
+    // return a function from here, and React will call
+    // it prior to unmounting.
+    return () => console.log('unmounting...');
+  }, [interest]) // empty dependency for now
 
   const mortgagePayment = () => {
     // calculate the mortgage payment
@@ -300,6 +319,8 @@ const apiKey = "cbUacErklh2yX2/duXxCvQ==CzXo86j5Yz6UapWK"
 
         
         <p> Interest Rate from Web Service: {interest}%</p>
+        <p> Interest Rate times 2 from Function: {interestRateTimes2}%</p>
+        
         <p style={{wordBreak: 'break-all'}}>State: ${JSON.stringify(mortgage)}</p>
         <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
       </div>

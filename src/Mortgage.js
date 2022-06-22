@@ -91,22 +91,8 @@ const Mortgage = () => {
   };
 
   const interestRateTimes2Func = () => {
-    interestRateTimes2 = interest * 2;
-    console.log(`interest rate times 2 = ${interestRateTimes2}`)
+    return (interestRateTimes2 = interest * 2);
   }
-
-  // Pass useEffect a function
-  useEffect(() => {
-    // This gets called after every render, by default
-    // (the first one, and every one after that)
-    console.log('interest rate change, render!');
-    interestRateTimes2Func();
-
-    // If you want to implement componentWillUnmount,
-    // return a function from here, and React will call
-    // it prior to unmounting.
-    return () => console.log('unmounting...');
-  }, [interest]) // empty dependency for now
 
   const mortgagePayment = () => {
     // calculate the mortgage payment
@@ -319,7 +305,7 @@ const Mortgage = () => {
 
         
         <p> Interest Rate from Web Service: {interest}%</p>
-        <p> Interest Rate times 2 from Function: {interestRateTimes2}%</p>
+        <p> Interest Rate times 2 from Function: {interestRateTimes2Func()}%</p>
         
         <p style={{wordBreak: 'break-all'}}>State: ${JSON.stringify(mortgage)}</p>
         <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>

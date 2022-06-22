@@ -36,7 +36,7 @@ const Mortgage = () => {
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [mortgage, setMortgage] = React.useState(mortgageDefault);
-  const [interest, setInterest] = React.useState(0);
+  const [interest, setInterest] = React.useState({value: 0});
 
   const handleSearch = (event) => {
     console.log(event);
@@ -65,13 +65,11 @@ const Mortgage = () => {
   // set the mortgage back to default values
   const resetMortgage = () => {
     setMortgage(mortgageDefault);
-
 ;  }
 
   const resetInteretRate = () => {
     setInterest(0);
   }
-
 
   const apiAddress = "https://api.api-ninjas.com/v1/interestrate"
   const apiKey = "cbUacErklh2yX2/duXxCvQ==CzXo86j5Yz6UapWK"
@@ -82,7 +80,7 @@ const Mortgage = () => {
         // If request is good...
         console.log(response.data);
         console.log(`US interest rate is ${response.data.central_bank_rates[0].rate_pct}`);
-        setInterest(response.data.central_bank_rates[0].rate_pct);
+        setInterest({...interest, value: response.data.central_bank_rates[0].rate_pct});
      })
     .catch((error) => {
         console.log('error ' + error);
@@ -90,8 +88,28 @@ const Mortgage = () => {
 
   };
 
+  const interestRateTimes2Func2 = () => {    
+    interestRateTimes2 = interest.value * 2;
+    console.log(`call interestRateTimes2Func2(): ${interestRateTimes2}`);
+  }
+
+    // Pass useEffect a function
+    useEffect(() => {
+        // This gets called after every render, by default
+        // (the first one, and every one after that)
+        console.log('render!');
+        // const data = RateAPI()
+        interestRateTimes2Func2();
+    
+        // If you want to implement componentWillUnmount,
+        // return a function from here, and React will call
+        // it prior to unmounting.
+        return () => console.log('unmounting...');
+      }, [interest]) // empty dependency for now
+  
+
   const interestRateTimes2Func = () => {
-    return (interestRateTimes2 = interest * 2);
+    return (interest.value * 2);
   }
 
   const mortgagePayment = () => {
@@ -304,8 +322,11 @@ const Mortgage = () => {
         <Button variant="contained" onClick={resetInteretRate}>Reset Interest Rate</Button>  <br/>  <br/>
 
         
-        <p> Interest Rate from Web Service: {interest}%</p>
+        <p> Interest Rate from Web Service: {interest.value}%</p>
         <p> Interest Rate times 2 from Function: {interestRateTimes2Func()}%</p>
+        <p> Interest Rate times 2 from variable: {interestRateTimes2}%</p>
+
+        
         
         <p style={{wordBreak: 'break-all'}}>State: ${JSON.stringify(mortgage)}</p>
         <p style={{wordBreak: 'break-all'}}>Debug: ${JSON.stringify(mortgagePayment())}</p>
